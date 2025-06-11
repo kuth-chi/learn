@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Protected Page</title>
-    <script>
-        if (!localStorage.getItem("authToken")) {
-            window.location.href = "/";
-        }
-    </script>
+    <title>Protected Page</title>
+    <script>
+        if (!localStorage.getItem("authToken")) {
+            window.location.href = "login.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const role = localStorage.getItem("userRole");
+            const contentDiv = document.getElementById("content");
+
+            if (role === "admin") {
+                contentDiv.innerHTML = "<h2>Admin Panel</h2><p>Welcome, Admin! You have full access.</p>";
+            } else {
+                contentDiv.innerHTML = "<h2>User Dashboard</h2><p>Welcome, User! You have limited access.</p>";
+            }
+        });
+    </script>
 </head>
 <body>
-    <h2>Protected Page</h2>
-    <p>You have successfully logged in!</p>
-    <button onclick="logout()">Logout</button>
-
-    <script>
-        function logout() {
-            localStorage.removeItem("authToken");
-            window.location.href = "/";
-        }
-    </script>
+   <h2>Protected Page</h2> 
+   <div id="content"></div>    
 </body>
 </html>

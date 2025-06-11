@@ -6,48 +6,29 @@
     <title>Registration Form</title>
 </head>
 <body>
-    <h1>Registration Form</h1>
-    <form id="registerForm">
-        <label>E-mail</label>
-        <input type="email" name="email" required />
-        <br>
-        <label>Password</label>
-        <input type="password" name="password" required />
-        <br>
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password" required />
-        <br>
-        <button type="submit">Register</button>
-    </form>
+    <h2>Register</h2>
+    <form id="registerForm" onsubmit="registerUser(event)">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        
+        <button type="submit">Register</button>
+    </form>
+    <script>
+        function registerUser(event) {
+            event.preventDefault(); 
 
-    <script>
-        document.getElementById("registerForm").addEventListener("submit", async (event) => {
-            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
 
-            const form = event.target;
-            const email = form.email.value;
-            const password = form.password.value;
-            const confirm_password = form.confirm_password.value;
+            let users = JSON.parse(localStorage.getItem("users")) || [];  
+            users.push({ email, password });  
+            localStorage.setItem("users", JSON.stringify(users));  
 
-            const response = await fetch("/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password, confirm_password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Store user in localStorage
-                localStorage.setItem("user", JSON.stringify(data.user));
-                alert("Registration successful!");
-                window.location.href = "/"; // Redirect to login or home
-            } else {
-                alert("Error: " + data.message);
-            }
-        });
-    </script>
+            window.location.href = "login.html";  
+        }
+    </script>
 </body>
 </html>

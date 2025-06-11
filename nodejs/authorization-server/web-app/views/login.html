@@ -6,74 +6,53 @@
     <title>Login</title>
 </head>
 <body>
-    <h1>Login Form</h1>
-    <form id="loginForm">
-        <label>Email:</label>
-        <input type="email" name="email" required /><br />
-        <label>Password:</label>
-        <input type="password" name="password" required /><br />
-        <button type="submit">Login</button>
-    </form>
+    <h2>Login</h2>
+    
+    <form id="loginForm" onsubmit="loginUser(event)">
+        <label for="email">Email:</label>
+        <input type="email" id="email">
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+        
+        <button type="submit">Login</button>
+    </form>
 
-    <div id="otpSection" style="display: none;">
-        <p>An OTP has been sent to your email (simulated in console).</p>
-        <label>Enter OTP:</label>
-        <input type="text" id="otpInput" /><br />
-        <button onclick="submitOTP()">Verify OTP</button>
-    </div>
+<button onclick="window.location.href='/oauth-login'">Login with OAuth</button>
 
-    <script>
-        let currentEmail = null;
+    <div id="mfaSection" style="display: none;">
+        <h3>Enter One-Time Passcode (OTP)</h3>
+        <input type="text" id="otp" placeholder="Enter OTP">
+        <button onclick="verifyOTP()">Verify OTP</button>
+        <p id="otpMessage"></p>
+    </div>
 
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
 
-            const email = e.target.email.value;
-            const password = e.target.password.value;
+    <script>
+        let generatedOTP;
 
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+        function loginUser(event) {
+            event.preventDefault();
 
-            const data = await response.json();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
 
-            if (response.ok) {
-                currentEmail = email;
-                document.getElementById("loginForm").style.display = "none";
-                document.getElementById("otpSection").style.display = "block";
-            } else {
-                alert(data.message);
-            }
-        });
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            const user = users.find(user => user.email === email && user.password === password);
 
-        async function submitOTP() {
-            const otp = document.getElementById("otpInput").value;
+            generatedOTP = Math.floor(100000 + Math.random() * 900000);
+            alert("Your OTP is: " + generatedOTP);
 
-            const response = await fetch("/verify-otp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: currentEmail, otp })
-            });
+            document.getElementById("mfaSection").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+        }
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Login successful");
-                window.location.href = "/protected.html";
-            } else {
-                alert("Invalid OTP");
-            }
-        }
-
-    if (response.ok) {
-        // Store a simulated auth token
-        localStorage.setItem("authToken", "fake-jwt-token");
-        alert("Login successful");
-        window.location.href = "/protected.html";
-    }
-
-    </script>
+        function verifyOTP() {
+            const enteredOTP = document.getElementById("otp").value;
+            localStorage.setItem("authToken", "fake-jwt-token");
+            window.location.href = "protected.html";
+        }
+    </script>
 </body>
 </html>

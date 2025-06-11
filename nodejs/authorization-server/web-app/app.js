@@ -1,69 +1,47 @@
 const express = require("express");
+const axios = require("axios");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const app = express();
+const PORT = process.env.PORT || 4001;
 app.use(express.json());
 app.use(express.static("views"));
 
-const PORT = process.env.PORT || 3000;
+// /oauth-login: Redirects user to OAuth Server for authentication
+app.get("/oauth-login", (req, res) => {
+    const email = "admin@example.com"; // Hardcoded for testing
+    const password = "admin123"; // Hardcoded for testing
 
-// Simulated user database (in memory)
-const users = {} ?? localStorage.getItem("user"); // { email: { password, otp } }
-
-// Serve static pages
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "views/login.html")));
-app.get("/register", (req, res) => res.sendFile(path.join(__dirname, "views/register.html")));
-app.get("/protected.html", (req, res) => res.sendFile(path.join(__dirname, "views/protected.html")));
-
-// Register endpoint
-app.post("/register", (req, res) => {
-    const { email, password, confirm_password } = req.body;
-
-    if (!email || !password || !confirm_password) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
-
-    if (password !== confirm_password) {
-        return res.status(400).json({ message: "Passwords do not match" });
-    }
-
-    users[email] = { password }; // Save user
-    res.status(200).json({ message: "Registration successful", user: { email } });
+    res.redirect(`http://localhost:5001/authorize?client_id=myClient&redirect_uri=http://localhost:4001/oauth-callback&state=xyz&email=${email}&password=${password}`);
 });
 
-// Login endpoint
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
+// /oauth-callback: Handles the authorization code and exchanges it for a token
+app.get("/oauth-callback", async (req, res) => {
+    const authCode = req.query.code;
 
-    const user = users[email];
+    if (!authCode) {
+        return res.status(400).send("Missing authorization code");
+    }
 
-    if (!user || user.password !== password) {
-        return res.status(401).json({ message: "Invalid credentials" });
-    }
+    try {
+        const tokenRes = await axios.post("http://localhost:5001/token", {
+            code: authCode,
+            client_id: "myClient"
+        });
 
-    // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.otp = otp; // Save OTP temporarily
+        const accessToken = tokenRes.data.access_token;
 
-    console.log(`OTP for ${email}: ${otp}`); // Simulate sending via email/SMS
-    res.status(200).json({ message: "OTP sent", email });
+        res.send(`<script>
+            localStorage.setItem("authToken", "${accessToken}");
+            window.location.href = "protected.html";
+        </script>`);
+    } catch (error) {
+        res.status(500).send("Failed to exchange authorization code for token");
+    }
 });
 
-// OTP verification
-app.post("/verify-otp", (req, res) => {
-    const { email, otp } = req.body;
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "views", "login.html")));
 
-    const user = users[email];
-    if (!user || user.otp !== otp) {
-        return res.status(401).json({ message: "Invalid OTP" });
-    }
-
-    delete user.otp; // Clear OTP after use
-    res.status(200).json({ message: "Login successful" });
-});
-
-app.listen(PORT, () => {
-    console.log(`Web App running on port ${PORT}`);
-    console.log(`Visit http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Web App running on port ${PORT}`));
