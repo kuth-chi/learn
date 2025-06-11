@@ -1,0 +1,103 @@
+:root {
+    --primary-color: #4c6baf;
+    --secondary-color: #f4f4f4;
+    --accent-color: #ff9800;
+    --border-color: #ccc;
+    --text-color: #333;
+}
+body{
+    font-family: Arial, sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-align: center;
+    line-height: 1.6;
+    font-size: 16px;
+    background-image: linear-gradient(to right, #e0eafc, #cfdef3);
+    background-size: cover;
+    background-position: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+}
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+
+}
+form {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+}
+form, input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+
+}
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+button, input[type="submit"] {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+
+}	
+button:hover, input[type="submit"]:hover {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+}
+.output {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--text-color);
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}

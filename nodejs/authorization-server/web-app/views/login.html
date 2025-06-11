@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login Form</h1>
+    <form id="loginForm">
+        <label>Email:</label>
+        <input type="email" name="email" required /><br />
+        <label>Password:</label>
+        <input type="password" name="password" required /><br />
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="otpSection" style="display: none;">
+        <p>An OTP has been sent to your email (simulated in console).</p>
+        <label>Enter OTP:</label>
+        <input type="text" id="otpInput" /><br />
+        <button onclick="submitOTP()">Verify OTP</button>
+    </div>
+
+    <script>
+        let currentEmail = null;
+
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                currentEmail = email;
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("otpSection").style.display = "block";
+            } else {
+                alert(data.message);
+            }
+        });
+
+        async function submitOTP() {
+            const otp = document.getElementById("otpInput").value;
+
+            const response = await fetch("/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: currentEmail, otp })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Login successful");
+                window.location.href = "/protected.html";
+            } else {
+                alert("Invalid OTP");
+            }
+        }
+
+    if (response.ok) {
+        // Store a simulated auth token
+        localStorage.setItem("authToken", "fake-jwt-token");
+        alert("Login successful");
+        window.location.href = "/protected.html";
+    }
+
+    </script>
+</body>
+</html>

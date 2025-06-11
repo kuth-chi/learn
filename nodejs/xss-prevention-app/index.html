@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XSS Prevention Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.8/purify.min.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>XSS Prevention Example</h1>
+    <p>Enter text and check how it is processed:</p>
+    <input type="text" id="userInput" placeholder="Enter text" />
+    <button onclick="processInput()">Submit</button>
+    <p>Output:</p>
+    <div id="output" style="white-space: pre-wrap; font-family: monospace;"></div>
+</body>
+</html>
