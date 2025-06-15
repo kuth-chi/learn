@@ -10,6 +10,14 @@ export const user = pgTable("user", {
   updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull()
 });
 
+export const oldPassword = pgTable("old_password", {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  password: text('password').notNull(),
+  createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+  updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull()
+});
+
 export const session = pgTable("session", {
   id: text('id').primaryKey(),
   expiresAt: timestamp('expires_at').notNull(),
