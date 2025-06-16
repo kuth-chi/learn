@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "k73pN9GhWJk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\900609\\Desktop\\Ps\\learning\\learn\\csharp\\DataTransitions\\DataTransitions.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\900609\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\900609\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.6\\microsoft.aspnetcore.openapi.9.0.6.nupkg.sha512",
+    "C:\\Users\\900609\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

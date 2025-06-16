@@ -1,0 +1,24 @@
+@DataTransitions_HostAddress = https://localhost:5001
+
+GET {{DataTransitions_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{DataTransitions_HostAddress}}/register/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "John Doe",
+  "Email": "john.doe@example.com",
+  "Password": "securepassword123"
+}
+
+###
+GET {{DataTransitions_HostAddress}}/users/1/decrypted-email/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": 1
+}
