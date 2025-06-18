@@ -108,7 +108,7 @@ export const SignUpView = () => {
                                     </FormItem>
                                 )}>
                                 </FormField>
-                                <FormField control={form.control} name="password" render={({ field }) => (
+                                <FormField control={form.control} name="confirmPassword" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Verify password</FormLabel>
                                         <FormControl>
