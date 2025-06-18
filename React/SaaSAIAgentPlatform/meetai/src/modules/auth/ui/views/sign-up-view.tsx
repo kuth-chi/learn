@@ -1,7 +1,8 @@
 "use client";
 
-import { Loader2, OctagonAlertIcon, OctagonAlert } from "lucide-react";
+import { Loader2, OctagonAlertIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -47,23 +48,43 @@ export const SignUpView = () => {
         setError(null); // Reset error state
         setIsLoading(true); // Set loading state to true
 
-            authClient.signUp.email({
-                email: data.email,
-                password: data.password,
-                name: data.name ?? "",
-            }, {
-                onSuccess: () => {
-                    router.push("/sign-in");
-                },
-                onError: ({ error }) => {
-                    // Set error message if sign-in fails
-                    setError(error?.message || "An unexpected error occurred");
-                    setIsLoading(false);
-                },
+        authClient.signUp.email({
+            email: data.email,
+            password: data.password,
+            name: data.name ?? "",
+            callbackURL: `${window.location.origin}`,
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: ({ error }) => {
+                // Set error message if sign-in fails
+                setError(error?.message || "An unexpected error occurred");
+                setIsLoading(false);
+            },
 
-            });
-    
-    }
+        });
+    };
+
+    const onSocialSignIn = async (provider: "github" | "google") => {
+        setError(null); // Reset error state
+        setIsLoading(true); // Set loading state to true
+
+        authClient.signIn.social({
+            provider: provider,
+            callbackURL: `${window.location.origin}`,
+        }, {
+            onSuccess: () => {
+                // router.push("/");
+            },
+            onError: ({ error }) => {
+                // Set error message if sign-in fails
+                setError(error?.message || "An unexpected error occurred");
+                setIsLoading(false);
+            },
+
+        });
+    };
 
     return (
         <div className="flex flex-col gap-6">
@@ -141,12 +162,12 @@ export const SignUpView = () => {
                                 <span className="bg-card text-muted-foreground relative z-10 px-2"> Or continue with</span>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" className="w-full cursor-pointer">
-                                    <img src="/google.svg" alt="Google" className="w-4 h-4 mr-2 inline-block"/>
+                                <Button type="button" onClick={()=> onSocialSignIn("google")} variant="outline" className="w-full cursor-pointer">
+                                    <Image src="/google.svg" height={16} width={16} alt="Google" className="w-4 h-4 mr-2 inline-block"/>
                                     Google
                                 </Button>
-                                <Button variant="outline" className="w-full cursor-pointer">
-                                    <img src="/github.svg" alt="GitHub" className="w-4 h-4 mr-2 inline-block"/>
+                                <Button type="button" onClick={()=> onSocialSignIn("github")} variant="outline" className="w-full cursor-pointer">
+                                    <Image src="/github.svg" height={16} width={16} alt="GitHub" className="w-4 h-4 mr-2 inline-block"/>
                                     GitHub
                                 </Button>
                             </div>
@@ -159,9 +180,9 @@ export const SignUpView = () => {
                         </div>
                     </form>
                 </Form>
-                <div className="bg-radial from-green-700 to-green-900 text-white relative hidden md:flex flex-col gap-y-4 items-center justify-center">
-                    <img src="/logo.svg" alt="Logo" className="w-[96px] h-[96px]"/>
-                    <div className="text-2xl text-green-400 font-semibold">
+                <div className="bg-radial from-green-900 to-green-950 text-white relative hidden md:flex flex-col gap-y-4 items-center justify-center">
+                    <Image src="/logo.svg" alt="Logo" height={96} width={96} className="w-[96px] h-[96px]"/>
+                    <div className="text-2xl text-green-200 font-semibold">
                         MeetAI
                      </div>
                 </div>
