@@ -5,6 +5,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { PanelLeftCloseIcon, PanelLeftIcon, SearchIcon } from "lucide-react";
 import DashboardCommand from "@/modules/Dashboard/ui/components/dashboard-command";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/dark-mode-toggle";
 
 // Dashboard/ui/components/dashboard-navbar.tsx
 
@@ -39,6 +40,9 @@ const DashboardNavbar = () => {
                     <span className="text-xs">&#8984;</span> K
                 </kbd>
             </Button>
+            <div className="ml-auto">
+                <ThemeToggle/>
+            </div>
         </nav>
         </>
     );

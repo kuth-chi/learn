@@ -124,10 +124,10 @@ const DashboardUserButton = () => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem className="flex items-center justify-between cursor-pointer">
-                        Billing 
-                    <CreditCardIcon className="size-4"/>
-                </DropdownMenuItem>
+                    <DropdownMenuItem className="flex items-center justify-between cursor-pointer">
+                            Billing 
+                        <CreditCardIcon className="size-4"/>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={onLogout} className="flex items-center justify-between cursor-pointer">
                         Logout 
                     <LogOutIcon className="size-4"/>
