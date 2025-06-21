@@ -10,7 +10,7 @@ interface GeneratedAvatarProp {
 
 }
 
-const GeneratedAvatar = ({
+export const GeneratedAvatar = ({
     seed, 
     className, 
     variant
@@ -34,5 +34,3 @@ const GeneratedAvatar = ({
         </Avatar>
     );
 };
-
-export default GeneratedAvatar;
