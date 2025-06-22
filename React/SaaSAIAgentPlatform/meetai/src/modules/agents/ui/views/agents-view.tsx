@@ -22,7 +22,7 @@ export const AgentsView = () => {
     }));
 
     return (
-        <div className="flex-1 px-4 md:px-8 flex flex-col gap-y-4">
+        <div className="flex-1 px-4 md:px-8 flex flex-col gap-y-4 overflow-y-scroll">
             <DataTable 
                 data={data.items} 
                 columns={columns}

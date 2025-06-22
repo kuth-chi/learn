@@ -14,7 +14,7 @@ export const DataPagination = ({
 }: Props) => {
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-muted border-t">
             <div className="flex-1 text-sm text-muted-foreground">
                 Page {page} of {totalPage || 1}
             </div>

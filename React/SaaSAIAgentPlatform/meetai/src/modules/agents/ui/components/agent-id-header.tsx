@@ -78,11 +78,11 @@ export const AgentIdHeader = ({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onEdit}>
+                    <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
                         <PencilIcon />
                         Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onRemove}>
+                    <DropdownMenuItem onClick={onRemove} className="cursor-pointer">
                         <TrashIcon className="text-red-500" />
                         Delete
                     </DropdownMenuItem>
