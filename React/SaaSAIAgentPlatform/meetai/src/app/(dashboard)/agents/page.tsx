@@ -16,6 +16,9 @@ interface Props {
 }
 
 const Page = async ({ searchParam }: Props) => {
+    // Add Router
+
+    // Load Search Params
     const filters = await loadSearchParams(searchParam);
     // Project Unauthorized user
     const session = await auth.api.getSession({
