@@ -1,19 +1,67 @@
+import { z } from "zod";
 import { db } from "@/db";
 import { agents } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { agentsInsertSchema } from "../schemas";
-import { z } from "zod";
+import { agentsInsertSchema, agentsUpdateSchema } from "../schemas";
 import { and, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
 import { TRPCError } from "@trpc/server";
 // import { TRPCError } from "@trpc/server";
 
 
 export const agentsRouter = createTRPCRouter({
-    // TODO: change getMany to use 'ProtectProcedure'
+    // Update Agent
+    update: protectedProcedure
+        .input(agentsUpdateSchema)
+        .mutation(async ({ input, ctx }) => {
+            // Check if the agent exists and belongs to the authenticated user
+            const [updatedAgent] = await db
+                .update(agents)
+                .set(input)
+                .where(
+                    and(
+                        eq(agents.id, input.id),
+                        eq(agents.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
+                    ),
+                )
+                .returning();
 
+            // If no agent was found, throw an error
+            if (!updatedAgent) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Agent not found or does not belong to the authenticated user",
+                });
+            };
+            // Return the updated agent
+            return updatedAgent;
+        }),
+
+    // TODO: Remove  Agent
+    remove: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation( async ({ input, ctx }) => {
+            // Check if the agent exists and belongs to the authenticated user
+            const [removeAgent] = await db
+                .delete(agents)
+                .where(
+                    and(
+                        eq(agents.id, input.id),
+                        eq(agents.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
+                    ),
+                )
+                .returning();
+            // If no agent was deleted, throw an error
+            if (!removeAgent) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Agent not found or does not belong to the authenticated user",
+                });
+            }
+            return removeAgent;
+        }),
+
+    // TODO: change getMany to use 'ProtectProcedure'
     // GetOne agent by Id
     getOne: protectedProcedure
         .input(z.object({ id: z.string() }))
@@ -97,20 +145,6 @@ export const agentsRouter = createTRPCRouter({
                 totalPage,
             };
         }),
-
-    // Get Many by User
-    getManyByUser: protectedProcedure.query(async () => {
-
-        const session = await auth.api.getSession({ headers: await headers() });
-        if (!session?.user.id) {
-            throw new Error("User ID is missing from session.");
-        }
-        const existingAgentsByUser = await db
-            .select()
-            .from(agents)
-            .where(eq(agents.userId, session.user.id));
-        return existingAgentsByUser;
-    }),
 
     // Create new agent
     create: protectedProcedure

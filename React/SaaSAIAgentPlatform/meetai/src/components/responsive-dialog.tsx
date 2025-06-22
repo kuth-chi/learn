@@ -62,7 +62,7 @@ export const ResponsiveDailog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DrawerTitle>{title}</DrawerTitle>
+                    <DialogTitle>{title}</DialogTitle>
                     <DrawerDescription>{description}</DrawerDescription>
                 </DialogHeader>
                 {children}
