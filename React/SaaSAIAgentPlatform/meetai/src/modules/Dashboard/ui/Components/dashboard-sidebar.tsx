@@ -51,7 +51,7 @@ export const DashboardSidebar = () => {
                 <p className="text-2xl font-semibold">Meet.AI</p>
             </Link>
         </SidebarHeader>
-        <div className="px-4 py-2">
+        <div className="px-4 py-2 opacity-30">
             <SidebarSeparator/>
         </div>
 
@@ -76,7 +76,7 @@ export const DashboardSidebar = () => {
                     </SidebarMenu>
                 </SidebarGroupContent>
             </SidebarGroup>
-            <div className="px-4 py-2">
+            <div className="px-4 py-2 opacity-30">
                 <SidebarSeparator/>
             </div>
             <SidebarGroup>
