@@ -1,40 +1,58 @@
 import { z } from "zod";
-import { db } from "@/db";
-import { meetings } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { agentsInsertSchema, agentsUpdateSchema } from "../schemas";
-import { and, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
+import { meetingsInsertSchema, meetingsUpdateSchema } from "../schemas";
+import { and, count, desc, eq, getTableColumns, ilike } from "drizzle-orm";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
 import { TRPCError } from "@trpc/server";
+import { meetings } from "@/db/schema";
+import { db } from "@/db";
 // import { TRPCError } from "@trpc/server";
 
 
 export const meetingsRouter = createTRPCRouter({
+    // Create new agent
+    create: protectedProcedure
+        .input(meetingsInsertSchema)
+        .mutation(async ({ input, ctx }) => {
+            // TODO:
+            const [createdMeeting] = await db
+                .insert(meetings)
+                .values({
+                    ...input,
+                    userId: ctx.auth.user.id,
+                })
+                .returning();
+
+            // TODO: Create Stream call, Upsert stream user.
+
+        return createdMeeting;
+    }),
+
     // Update Agent
     update: protectedProcedure
-        .input(agentsUpdateSchema)
+        .input(meetingsUpdateSchema)
         .mutation(async ({ input, ctx }) => {
             // Check if the agent exists and belongs to the authenticated user
-            const [updatedAgent] = await db
-                .update(agents)
+            const [updatedMeeting] = await db
+                .update(meetings)
                 .set(input)
                 .where(
                     and(
-                        eq(agents.id, input.id),
-                        eq(agents.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
+                        eq(meetings.id, input.id),
+                        eq(meetings.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
                     ),
                 )
                 .returning();
 
             // If no agent was found, throw an error
-            if (!updatedAgent) {
+            if (!updatedMeeting) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
                     message: "Agent not found or does not belong to the authenticated user",
                 });
             };
             // Return the updated agent
-            return updatedAgent;
+            return updatedMeeting;
         }),
 
     // TODO: Remove  Agent
@@ -42,23 +60,23 @@ export const meetingsRouter = createTRPCRouter({
         .input(z.object({ id: z.string() }))
         .mutation( async ({ input, ctx }) => {
             // Check if the agent exists and belongs to the authenticated user
-            const [removeAgent] = await db
-                .delete(agents)
+            const [removeMeeting] = await db
+                .delete(meetings)
                 .where(
                     and(
-                        eq(agents.id, input.id),
-                        eq(agents.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
+                        eq(meetings.id, input.id),
+                        eq(meetings.userId, ctx.auth.user.id), // Ensure the agent belongs to the authenticated user
                     ),
                 )
                 .returning();
             // If no agent was deleted, throw an error
-            if (!removeAgent) {
+            if (!removeMeeting) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
                     message: "Agent not found or does not belong to the authenticated user",
                 });
             }
-            return removeAgent;
+            return removeMeeting;
         }),
 
     // TODO: change getMany to use 'ProtectProcedure'
@@ -141,24 +159,5 @@ export const meetingsRouter = createTRPCRouter({
                 total: total.count,
                 totalPage,
             };
-        }),
-
-    // Create new agent
-    create: protectedProcedure
-        .input(agentsInsertSchema)
-        .mutation(async ({ input, ctx }) => {
-            // TODO:
-            const [createdMeeting] = await db
-                .insert(meetings)
-                .values({
-                    ...input,
-                    meetingId: ctx.auth.user.id,
-                })
-                .returning();
-            // Test
-            // const { name, instructions } = input;
-            // const { auth } = ctx;
-
-            return createdMeeting;
         }),
 });
