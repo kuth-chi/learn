@@ -1,15 +1,17 @@
 import { Input } from "@/components/ui/input";
-import { useMeetingsFilters } from "../../hooks/use-meetings-filters"
 import { SearchIcon, XCircleIcon } from "lucide-react";
 import { DEFAULT_PAGE_NUMBER } from "@/constants";
+import { useMeetingsFilters } from "../../hooks/use-meeting-search-filters";
 
 
-export const MeetingSearchFilters = () => {
+export const MeetingsSearchFilters = () => {
     const [ filters, setFilters ] = useMeetingsFilters();
     const isAnyFilterModified = !!filters.search;
 
     const onClearFilter = () => {
         setFilters({
+            status: null,
+            agentId: "",
             search: "",
             page: DEFAULT_PAGE_NUMBER,
         });

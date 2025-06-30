@@ -8,12 +8,13 @@ import { useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { meetingsInsertSchema } from "../../schemas";
 import { Input } from "@/components/ui/input";
-import { Form, FormLabel, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Form, FormLabel, FormControl, FormField, FormItem, FormMessage, FormDescription } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { MeetingGetOne } from "../../types";
 import { useState } from "react";
 import { CommandSelect } from "@/components/command-select";
 import { GeneratedAvatar } from "@/components/generated-avatar";
+import { NewAgentDialog } from "@/modules/agents/ui/components/new-agent-dialog";
 
 interface MeetingFormProps {
     onSuccess?: (id?: string ) => void;
@@ -31,7 +32,7 @@ export const MeetingForm = ({
     const router = useRouter();
     const queryClient = useQueryClient();
     
-    const [open, setOpent] = useState(false);
+    const [openNewAgentDialog, setOpentNewAgentDialog] = useState(false);
     const [agentSearch, setAgentSearch] = useState("");
     // Get all agents for the select input or command input
     const agents = useQuery(
@@ -109,6 +110,8 @@ export const MeetingForm = ({
     };
 
     return (
+        <>
+        <NewAgentDialog open={openNewAgentDialog} onOpenChange={setOpentNewAgentDialog} />
         <Form {...form}>
             <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField 
@@ -152,6 +155,18 @@ export const MeetingForm = ({
                                     placeholder="Select an agent"
                                 />
                             </FormControl>
+                            <FormDescription>
+                                Not found what your&apos;re looking for?
+                                <Button
+                                variant="link"
+                                disabled={isPending}
+                                type="button"
+                                className="text-primary hover:underline"
+                                onClick={() => setOpentNewAgentDialog(true)}
+                                >
+                                    Create New Agent
+                                </Button>
+                            </FormDescription>
                             <FormMessage/>
                         </FormItem>
                     )}
@@ -173,5 +188,6 @@ export const MeetingForm = ({
                 </div>
             </form>
         </Form>
+        </>
     );
 };

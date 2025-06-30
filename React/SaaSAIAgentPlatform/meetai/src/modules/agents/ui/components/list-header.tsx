@@ -6,6 +6,7 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NewAgentDialog } from "@/modules/agents/ui/components/new-agent-dialog";
 import { AgentSearchFilters } from "./agent-search-filters";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 // import { AgentForm } from "./agent-form";
 
 const AgentListHeader = () => {
@@ -26,9 +27,13 @@ const AgentListHeader = () => {
                     New Agent
                 </Button>
             </div>
-            <div className="flex items-center gap-x-2 p-1">
-                <AgentSearchFilters />
-            </div>
+            <ScrollArea>
+                <div className="flex items-center gap-x-2 p-1">
+                    <AgentSearchFilters />
+                </div>
+                <ScrollBar orientation="horizontal"/>
+            </ScrollArea>
+       
         </div>
         </>
     );
