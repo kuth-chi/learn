@@ -1,0 +1,33 @@
+﻿@page "/"
+@using ShopEase.Services;
+@inject IProduct ProductService;
+@inject ShopEase.Services.CartService CartService
+<PageTitle>Home</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4 text-center mb-4">Welcome to ShopEase</h1>
+            <p class="text-center text-muted">Discover amazing products at great prices</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        @foreach (var product in productList)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <ProductCard Product="product" />
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Product> productList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.LoadProductsAsync();
+        productList = ProductService.Products.ToList();
+    }
+}

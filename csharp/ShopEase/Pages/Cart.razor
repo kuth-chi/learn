@@ -1,0 +1,96 @@
+@page "/cart"
+@inject ShopEase.Services.CartService CartService
+@implements IDisposable
+@using System.Linq
+
+<h3>Your Cart (@CartService.CartItems.Count items)</h3>
+@if (CartService.CartItems.Count == 0)
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (item, quantity) in cartItems)
+            {
+                <tr>
+                    <td><img src="https://picsum.photos/300/200?random=@item.ProductId" alt="@item.Name" class="img-fluid" /></td>
+                    <td>@item.Name</td>
+                    <td>@item.Category</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => DecrementQuantity(item)">-</button>
+                            <span>@quantity</span>
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => IncrementQuantity(item)">+</button>
+                        </div>
+                    </td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@(item.Price * quantity)</td>
+                    <button class="btn btn-danger btn-sm" @onclick="() => RemoveAll(item)">Remove</button>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-end">
+        <strong>Total: @CartService.CalculateTotal().ToString("C")</strong>
+    </div>
+}
+
+@code {
+    private List<(Product product, int quantity)> cartItems = new();
+
+    protected override void OnInitialized()
+    {
+        CartService.OnCartChanged += UpdateCartItems;
+        UpdateCartItems();
+    }
+
+    private void UpdateCartItems()
+    {
+        cartItems = CartService.CartItems
+            .GroupBy(p => p.ProductId)
+            .Select(g => (g.First(), g.Count()))
+            .ToList();
+        StateHasChanged();
+    }
+
+    private void IncrementQuantity(Product product)
+    {
+        CartService.AddToCart(product);
+    }
+
+    private void DecrementQuantity(Product product)
+    {
+        // Find the first instance of this product in the cart
+        var toRemove = CartService.CartItems.FirstOrDefault(p => p.ProductId == product.ProductId);
+        if (toRemove != null)
+        {
+            CartService.RemoveFromCart(toRemove.ProductId);
+        }
+    }
+
+    private void RemoveAll(Product product)
+    {
+        while (CartService.CartItems.Any(p => p.ProductId == product.ProductId))
+        {
+            CartService.RemoveFromCart(product.ProductId);
+        }
+    }
+
+    public void Dispose()
+    {
+        CartService.OnCartChanged -= UpdateCartItems;
+    }
+} 

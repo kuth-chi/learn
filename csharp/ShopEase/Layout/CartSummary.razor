@@ -1,0 +1,30 @@
+@inject ShopEase.Services.CartService CartService
+@implements IDisposable
+
+<a href="/cart" class="btn btn-outline-primary position-relative" @attributes="AdditionalAttributes">
+    <span class="bi bi-cart-fill"></span>
+    Cart
+    @if (CartService.CartItems.Count > 0)
+    {
+        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+            @CartService.CartItems.Count
+        </span>
+    }
+</a>
+
+@code {
+    [Parameter] public string? Class { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        CartService.OnCartChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CartService.OnCartChanged -= StateHasChanged;
+    }
+} 

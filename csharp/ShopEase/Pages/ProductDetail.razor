@@ -1,0 +1,153 @@
+@page "/product/{ProductId:int}"
+@inject IProduct ProductService
+@inject ShopEase.Services.CartService CartService
+@inject NavigationManager Navigation
+
+<PageTitle>@(product?.Name ?? "Product") - ShopEase</PageTitle>
+
+@if (product == null)
+{
+    <div class="container mt-5">
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading product details...</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">@product.Category</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@product.Name</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Product Image -->
+            <div class="col-md-6 mb-4">
+                <div class="position-relative">
+                    <img src="https://picsum.photos/600/400?random=@product.ProductId" 
+                         class="img-fluid rounded shadow" 
+                         alt="@product.Name" />
+                    <div class="position-absolute top-0 start-0 m-3">
+                        <span class="badge bg-primary fs-6">@product.Category</span>
+                    </div>
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-success fs-6">@product.Price.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="card-title mb-3">@product.Name</h1>
+                        <p class="text-muted mb-3">Product ID: @product.ProductId</p>
+                        
+                        <div class="mb-4">
+                            <h3 class="text-success mb-2">@product.Price.ToString("C")</h3>
+                            <span class="badge bg-info">@product.Category</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p class="text-muted">
+                                This is a high-quality @(product.Category?.ToLower() ?? "product") product. 
+                                Perfect for your needs with excellent features and durability.
+                            </p>
+                        </div>
+
+                        <!-- Quantity and Add to Cart -->
+                        <div class="mb-4">
+                            <h5>Quantity</h5>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="input-group" style="width: 150px;">
+                                    <button class="btn btn-outline-secondary" @onclick="DecrementQuantity" disabled="@(quantity <= 0)">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <span class="form-control text-center">@quantity</span>
+                                    <button class="btn btn-outline-secondary" @onclick="IncrementQuantity">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                                <button class="btn btn-primary" @onclick="AddToCart" disabled="@(quantity <= 0)">
+                                    <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Product Features -->
+                        <div class="mb-4">
+                            <h5>Features</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>High quality materials</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Durable construction</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Excellent value for money</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Fast shipping available</li>
+                            </ul>
+                        </div>
+
+                        <!-- Back Button -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary" @onclick="GoBack">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Products
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+
+    private Product? product;
+    private int quantity = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.LoadProductsAsync();
+        product = ProductService.GetProductById(ProductId);
+        
+        if (product == null)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private void AddToCart()
+    {
+        if (product != null)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                CartService.AddToCart(product);
+            }
+        }
+    }
+
+    private void IncrementQuantity()
+    {
+        quantity++;
+    }
+
+    private void DecrementQuantity()
+    {
+        if (quantity > 1)
+            quantity--;
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+} 
