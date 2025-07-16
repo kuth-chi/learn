@@ -1,7 +1,10 @@
 import React from "react";
 import { SignUpView } from "@/modules/auth/ui/views/sign-up-view";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
-const page = () => {
+const page = async () => {
 
   // This page is for signing up users
   // It should include a form for users to enter their details
@@ -14,6 +17,13 @@ const page = () => {
   // This is a placeholder for the sign-up form.
   // You can replace this with your actual sign-up form component.
   // Ensure that you have the necessary authentication logic in place to handle user registration.
+    // Handle this page rendering when user is already signed in
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if(!!session) {
+      redirect("/");
+    }
   return <SignUpView />;
 }
 export default page;

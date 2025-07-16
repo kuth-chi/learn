@@ -1,6 +1,6 @@
 'use client';
 // dark-mode-toggle.tsx
-import { Moon, Sun } from "lucide-react"
+import { Moon, MoonIcon, PaletteIcon, Sun, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function ModeToggle() {
+export function ThemeToggle() {
   const { setTheme } = useTheme()
   return (
     <DropdownMenu>
@@ -22,13 +22,16 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
+          <SunIcon/>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
+          <MoonIcon/>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
+          <PaletteIcon/>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
